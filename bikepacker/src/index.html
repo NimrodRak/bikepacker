@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BikePacker Map</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+    <!-- Leaflet GPX Plugin -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/2.1.2/gpx.min.js"
+            crossorigin=""></script>
+    <style>
+        /* Basic styling to make the map fill the page */
+        html {
+            height: 100%;
+            margin: 0;
+        }
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 20px; /* Add padding around the body for the bezel */
+            box-sizing: border-box; /* Include padding in height calculation */
+        }
+        #map-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%; /* Take full height of the padded body */
+            width: 66.66%; /* Take leftmost two-thirds of the width */
+        }
+        #map {
+            flex-grow: 1; /* Map takes up available space */
+            box-sizing: border-box; /* Include border/padding in element's total width and height */
+        }
+        #gpx-slider {
+            width: 100%; /* Slider takes full width of container */
+            margin-top: 10px; /* Space between map and slider */
+            height: 20px; /* Explicit height for the slider */
+        }
+
+    </style>
+</head>
+<body>
+
+<div id="map-container">
+    <div id="map"></div>
+    <input type="range" id="gpx-slider" value="0" min="0" max="0" disabled> <!-- Added slider -->
+</div>
+
+<!-- Link to the external JavaScript file -->
+<script src="/map.js" defer></script>
+
+</body>
+</html>
