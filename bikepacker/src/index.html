@@ -1,59 +1,85 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>BikePacker Map</title>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-          crossorigin=""/>
-    <!-- Leaflet JavaScript -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-            crossorigin=""></script>
-    <!-- Leaflet GPX Plugin -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/2.1.2/gpx.min.js"
-            crossorigin=""></script>
+    <title>BikePacker</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/1.7.0/gpx.min.js"></script>
     <style>
-        /* Basic styling to make the map fill the page */
-        html {
-            height: 100%;
-            margin: 0;
-        }
-        body {
-            height: 100%;
-            margin: 0;
-            padding: 20px; /* Add padding around the body for the bezel */
-            box-sizing: border-box; /* Include padding in height calculation */
-        }
+        body, html { margin: 0; padding: 0; height: 100%; font-family: Arial, sans-serif; }
+        #container { display: flex; height: 100%; }
         #map-container {
+            flex: 2; height: 100%; /* Left two-thirds */
+            position: relative; /* For absolute positioning of slider-container */
+        }
+        #map { width: 100%; height: 100%; }
+        #controls-container {
+            flex: 1; /* Right one-third */
+            padding: 20px;
+            box-sizing: border-box;
+            background-color: #f0f0f0;
             display: flex;
             flex-direction: column;
-            height: 100%; /* Take full height of the padded body */
-            width: 66.66%; /* Take leftmost two-thirds of the width */
+            align-items: flex-start; /* Align items to the top */
         }
-        #map {
-            flex-grow: 1; /* Map takes up available space */
-            box-sizing: border-box; /* Include border/padding in element's total width and height */
+        #upload-section {
+            width: 100%;
+            margin-bottom: 20px;
+            display: flex; /* Arrange children in a row */
+            align-items: center; /* Vertically align children */
+            gap: 10px; /* Add some space between the label and the button */
         }
-        #gpx-slider {
-            width: 100%; /* Slider takes full width of container */
-            margin-top: 10px; /* Space between map and slider */
-            height: 20px; /* Explicit height for the slider */
+        #upload-section h3 {
+            margin-top: 0;
+            margin-bottom: 0; /* Remove default bottom margin for better alignment */
         }
-
+        #altitude-chart-container {
+            position: absolute;
+            bottom: 30px; /* Positioned above the slider (slider is at 30px, allow ~50px for slider height + spacing) */
+            left: 20px;   /* Consistent padding with slider */
+            width: calc(100% - 40px); /* Full width minus padding */
+            height: 100px; /* Fixed height for the chart area */
+            padding: 10px; /* Padding inside the chart container */
+            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            z-index: 1000; /* Ensure it's above map tiles but below modals if any */
+            box-sizing: border-box;
+            display: none; /* Initially hidden, shown by JS when track loads */
+        }
+        #altitude-chart {
+            width: 100%;
+            height: 100%;
+        }
+        #track-slider {
+            width: 100%;
+            cursor: pointer;
+        }
+        .track-dot-icon { /* Custom styling for the moving dot */
+            background-color: #ff4500; /* OrangeRed */
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 0 0 2px rgba(0,0,0,0.3);
+        }
     </style>
 </head>
 <body>
-
-<div id="map-container">
-    <div id="map"></div>
-    <input type="range" id="gpx-slider" value="0" min="0" max="0" disabled> <!-- Added slider -->
-</div>
-
-<!-- Link to the external JavaScript file -->
-<script src="/map.js" defer></script>
-
+    <div id="container">
+        <div id="map-container">
+            <div id="map"></div>
+            <div id="altitude-chart-container">
+                <canvas id="altitude-chart"></canvas>
+                <input type="range" id="track-slider" min="0" max="100" value="0">
+            </div>
+        </div>
+        <div id="controls-container">
+            <div id="upload-section">
+                <h3>Upload GPX File</h3>
+                <input type="file" id="gpx-file-input" accept=".gpx">
+            </div>
+        </div>
+    </div>
+    <script type="module" src="/map.js"></script>
 </body>
 </html>

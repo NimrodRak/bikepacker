@@ -8,4 +8,4 @@ RUN npm install
 
 COPY ./bikepacker /home/node/bikepacker
 
-CMD node /home/node/bikepacker/src/index.js
+CMD node /home/node/bikepacker/src/app.js
