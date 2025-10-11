@@ -181,13 +181,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }).addTo(map);
 
     // Slider and marker related variables
-    const fileInput = document.getElementById('gpx-file-input');
+    const gpxSelect = document.getElementById('gpx-select');
     const sliderContainer = document.getElementById('altitude-chart-container');
     const trackSlider = document.getElementById('track-slider');
     let trackMarker = null;
     let allTrackPoints = [];
-
-    // Custom icon for the moving dot
     const dotIcon = L.divIcon({
         className: 'track-dot-icon', // Defined in index.html CSS
         html: '', // No HTML content needed, styled by CSS
@@ -211,100 +209,115 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     let currentGpxLayer = null;
-    let currentGpxObjectUrl = null; // To store the object URL for cleanup
 
-    fileInput.addEventListener('change', function (event) {
-        const file = event.target.files[0];
-        if (file) {
-            // Clean up previous layer and object URL if they exist
-            if (currentGpxLayer) {
-                map.removeLayer(currentGpxLayer);
-                currentGpxLayer = null;
+    /**
+     * Loads a GPX track from a given URL and displays it on the map.
+     * @param {string} gpxUrl - The URL of the GPX file to load.
+     */
+    function loadGpxTrack(gpxUrl) {
+        // Clean up previous layer if it exists
+        if (currentGpxLayer) {
+            map.removeLayer(currentGpxLayer);
+            currentGpxLayer = null;
+        }
+        cleanupTrackElements();
+
+        currentGpxLayer = new L.GPX(gpxUrl, {
+            async: true,
+            gpx_options: { parseElements: ["track"] },
+            marker_options: {
+                startIconUrl: null,
+                endIconUrl: null,
+                shadowUrl: null,
             }
-            if (currentGpxObjectUrl) {
-                URL.revokeObjectURL(currentGpxObjectUrl);
-                currentGpxObjectUrl = null;
+        }).on('loaded', function (e) {
+            map.fitBounds(e.target.getBounds());
+            allTrackPoints = []; // Reset points
+
+            const gpxLayers = e.target.getLayers();
+            gpxLayers.forEach(trkLayer => {
+                if (trkLayer instanceof L.Polyline) {
+                    const latlngs = trkLayer.getLatLngs();
+                    allTrackPoints = allTrackPoints.concat(latlngs);
+                }
+            });
+
+            if (allTrackPoints.length > 0) {
+                sliderContainer.style.display = 'block';
+                trackSlider.min = 0;
+                trackSlider.max = allTrackPoints.length - 1;
+                trackSlider.value = 0;
+
+                if (!trackMarker) {
+                    trackMarker = L.marker(allTrackPoints[0], { icon: dotIcon }).addTo(map);
+                } else {
+                    trackMarker.setLatLng(allTrackPoints[0]);
+                }
+            } else {
+                sliderContainer.style.display = 'none';
             }
 
-            currentGpxObjectUrl = URL.createObjectURL(file); // Create new object URL
+            const elevationDataRaw = e.target.get_elevation_data();
+            if (elevationDataRaw && elevationDataRaw.length > 0) {
+                trackDistances = elevationDataRaw.map(p => p[0] / 1000);
+                trackAltitudes = elevationDataRaw.map(p => p[1] === undefined || p[1] === null ? null : parseFloat(p[1]));
 
-            currentGpxLayer = new L.GPX(currentGpxObjectUrl, {
-                async: true,
-                gpx_options: {
-                    parseElements: ["track"]
-                },
-                marker_options: {
-                    startIconUrl: null,
-                    endIconUrl: null,
-                    shadowUrl: null,
-                }
-            }).on('loaded', function (e) {
-                map.fitBounds(e.target.getBounds());
-                allTrackPoints = []; // Reset points
+                createOrUpdateAltitudeChart(trackDistances, trackAltitudes, e.target.get_distance() / 1000);
+                document.getElementById('altitude-chart-container').style.display = 'block';
 
-                // Extract all LatLng points from the GPX track
-                const gpxLayers = e.target.getLayers(); // e.target is the L.GPX layer group
-                gpxLayers.forEach(trkLayer => {
-                    if (trkLayer instanceof L.Polyline) { // Ensure it's a polyline
-                        const latlngs = trkLayer.getLatLngs(); // For L.Polyline, this is LatLng[]
-                        allTrackPoints = allTrackPoints.concat(latlngs);
-                    }
-                });
-
-                if (allTrackPoints.length > 0) {
-                    sliderContainer.style.display = 'block';
-                    trackSlider.min = 0;
-                    trackSlider.max = allTrackPoints.length - 1;
-                    trackSlider.value = 0;
-
-                    if (!trackMarker) {
-                        trackMarker = L.marker(allTrackPoints[0], { icon: dotIcon }).addTo(map);
-                    } else {
-                        trackMarker.setLatLng(allTrackPoints[0]);
-                    }
-                } else {
-                    sliderContainer.style.display = 'none';
-                }
-                // Assuming 'gpx' is your L.GPX instance
-                // ... (existing code to get trackCoords, setup slider, etc.)
-
-                // Extract elevation data
-                const elevationDataRaw = e.target.get_elevation_data(); // Array of [distance_m, elevation_m, tooltip_html]
-
-                if (elevationDataRaw && elevationDataRaw.length > 0) {
-                    trackDistances = elevationDataRaw.map(p => p[0] / 1000); // Convert distance to km
-                    trackAltitudes = elevationDataRaw.map(p => p[1] === undefined || p[1] === null ? null : parseFloat(p[1])); // Get elevation, handle nulls
-
-                    createOrUpdateAltitudeChart(trackDistances, trackAltitudes, e.target.get_distance() / 1000);
-                    document.getElementById('altitude-chart-container').style.display = 'block';
-                } else {
-                    // No elevation data, hide chart
-                    trackDistances = [];
-                    trackAltitudes = [];
-                    createOrUpdateAltitudeChart([], [], null); // This will hide the chart
-                    console.log("No elevation data found in GPX.");
-                }
-
-                // Manually trigger an update for the chart dot to the initial position
                 if (altitudeChart && trackDistances.length > 0 && trackAltitudes.length > 0) {
                     altitudeChart.data.datasets[1].data = [{ x: trackDistances[0], y: trackAltitudes[0] }];
                     altitudeChart.update('none');
                 }
+            } else {
+                trackDistances = [];
+                trackAltitudes = [];
+                createOrUpdateAltitudeChart([], [], null);
+                console.log("No elevation data found in GPX.");
+            }
 
+            console.log(`GPX file loaded: ${gpxUrl}`);
+        }).on('error', function (e) {
+            console.error("Error loading GPX file:", e.error || e);
+            alert("Error loading GPX file. Please ensure it's a valid GPX format.");
+            cleanupTrackElements();
+        }).addTo(map);
+    }
 
-                console.log("GPX file loaded and displayed from upload.");
-            }).on('error', function (e) { // Note: L.GPX error handling might be limited for parsing errors
-                console.error("Error loading GPX file:", e.error || e);
-                alert("Error loading GPX file. Please ensure it's a valid GPX format.");
-                if (currentGpxObjectUrl) { // Clean up object URL on error
-                    URL.revokeObjectURL(currentGpxObjectUrl);
-                    currentGpxObjectUrl = null;
-                }
-                cleanupTrackElements(); // Clean up slider/marker on error too
+    // Fetch GPX files and populate the dropdown
+    fetch('/api/gpx-files')
+        .then(response => response.json())
+        .then(files => {
+            gpxSelect.innerHTML = '<option value="">Select a track...</option>'; // Default option
+            files.forEach(file => {
+                const option = document.createElement('option');
+                option.value = file;
+                option.textContent = file;
+                gpxSelect.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error('Failed to fetch GPX files:', error);
+            gpxSelect.innerHTML = '<option value="">Could not load tracks</option>';
+        });
 
-            }).addTo(map);
+    // Event listener for the dropdown
+    gpxSelect.addEventListener('change', function () {
+        const selectedFile = this.value;
+        if (selectedFile) {
+            const gpxUrl = `/assets/${selectedFile}`;
+            loadGpxTrack(gpxUrl);
+        } else {
+            // If user selects the default "Select a track..." option
+            if (currentGpxLayer) {
+                map.removeLayer(currentGpxLayer);
+                currentGpxLayer = null;
+            }
+            cleanupTrackElements();
+            createOrUpdateAltitudeChart([], [], null);
         }
     });
+
     // Event listener for the slider
     trackSlider.addEventListener('input', function () {
         const pointIndex = parseInt(this.value, 10);
@@ -332,5 +345,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
     });
 
-    console.log("Map initialized. Ready for GPX file upload.");
+    console.log("Map initialized. Ready to select a GPX file.");
 });
