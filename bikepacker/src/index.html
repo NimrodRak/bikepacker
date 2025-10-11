@@ -22,7 +22,7 @@
         height: 100%;
       }
       #map-container {
-        flex: 2;
+        flex: 7; /* Adjusted flex ratio */
         height: 100%; /* Left two-thirds */
         position: relative; /* For absolute positioning of slider-container */
       }
@@ -31,7 +31,7 @@
         height: 100%;
       }
       #controls-container {
-        flex: 1; /* Right one-third */
+        flex: 3; /* Adjusted flex ratio */
         padding: 20px;
         box-sizing: border-box;
         background-color: #f0f0f0;
@@ -42,13 +42,11 @@
       #upload-section {
         width: 100%;
         margin-bottom: 20px;
-        display: flex; /* Arrange children in a row */
-        align-items: center; /* Vertically align children */
-        gap: 10px; /* Add some space between the label and the button */
       }
-      #upload-section h3 {
-        margin-top: 0;
-        margin-bottom: 0; /* Remove default bottom margin for better alignment */
+      #gpx-select {
+        width: 100%; /* Make dropdown take full width */
+        padding: 5px;
+        font-size: 1em;
       }
       #altitude-chart-container {
         position: absolute;
@@ -97,8 +95,7 @@
       </div>
       <div id="controls-container">
         <div id="upload-section">
-          <h3>Select GPX File</h3>
-          <select id="gpx-select"></select>
+          <select id="gpx-select" title="Select a track"></select>
         </div>
         <div id="track-details-container">
           <!-- Details from route.txt will be inserted here by map.js -->
