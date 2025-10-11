@@ -22,8 +22,11 @@ app.use('/assets', express.static(assetsPath));
 // API endpoint to get the list of GPX files
 app.get('/api/gpx-files', async (req, res) => {
     try {
+        console.log(`[Debug] Checking for GPX files in: ${assetsPath}`);
         const files = await fs.readdir(assetsPath);
+        console.log(`[Debug] Found files in assets directory: ${files.join(', ') || 'None'}`);
         const gpxFiles = files.filter(file => file.toLowerCase().endsWith('.gpx'));
+        console.log(`[Debug] Filtered GPX files: ${gpxFiles.join(', ') || 'None'}`);
         res.json(gpxFiles);
     } catch (error) {
         console.error("Error reading assets directory:", error);
