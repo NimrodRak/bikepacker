@@ -22,15 +22,35 @@ app.use('/assets', express.static(assetsPath));
 // API endpoint to get the list of GPX files
 app.get('/api/gpx-files', async (req, res) => {
     try {
-        console.log(`[Debug] Checking for GPX files in: ${assetsPath}`);
-        const files = await fs.readdir(assetsPath);
-        console.log(`[Debug] Found files in assets directory: ${files.join(', ') || 'None'}`);
-        const gpxFiles = files.filter(file => file.toLowerCase().endsWith('.gpx'));
-        console.log(`[Debug] Filtered GPX files: ${gpxFiles.join(', ') || 'None'}`);
-        res.json(gpxFiles);
+        console.log(`[Debug] Checking for track directories in: ${assetsPath}`);
+        const entries = await fs.readdir(assetsPath, { withFileTypes: true });
+        const trackDirectories = entries
+            .filter(entry => entry.isDirectory())
+            .map(entry => entry.name);
+        console.log(`[Debug] Found track directories: ${trackDirectories.join(', ') || 'None'}`);
+        res.json(trackDirectories);
     } catch (error) {
         console.error("Error reading assets directory:", error);
         res.status(500).json({ error: 'Could not list GPX files.' });
+    }
+});
+
+// API endpoint to get the details from route.txt for a specific track
+app.get('/api/track-details/:trackName', async (req, res) => {
+    const trackName = req.params.trackName;
+    // Basic sanitization to prevent directory traversal
+    if (trackName.includes('..') || trackName.includes('/')) {
+        return res.status(400).json({ error: 'Invalid track name.' });
+    }
+    const detailsPath = path.join(assetsPath, trackName, 'route.txt');
+
+    try {
+        const detailsContent = await fs.readFile(detailsPath, 'utf-8');
+        res.send(detailsContent);
+    } catch (error) {
+        console.error(`Error reading details for track '${trackName}':`, error);
+        // If route.txt doesn't exist, send an empty response instead of an error
+        res.send('');
     }
 });
 

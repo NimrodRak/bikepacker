@@ -302,11 +302,37 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
     // Event listener for the dropdown
-    gpxSelect.addEventListener('change', function () {
-        const selectedFile = this.value;
-        if (selectedFile) {
-            const gpxUrl = `/assets/${selectedFile}`;
+    gpxSelect.addEventListener('change', async function () {
+        const selectedTrackName = this.value;
+        const detailsContainer = document.getElementById('track-details-container');
+        detailsContainer.innerHTML = ''; // Clear previous details
+
+        if (selectedTrackName) {
+            // 1. Load the GPX track for the map
+            const gpxUrl = `/assets/${selectedTrackName}/route.gpx`;
             loadGpxTrack(gpxUrl);
+
+            // 2. Fetch and display the track details from route.txt
+            try {
+                const response = await fetch(`/api/track-details/${selectedTrackName}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const text = await response.text();
+                const lines = text.split('\n').filter(line => line.trim() !== ''); // Split by line and remove empty lines
+
+                if (lines.length > 0) {
+                    const list = document.createElement('ul');
+                    lines.forEach(line => {
+                        const item = document.createElement('li');
+                        item.textContent = line;
+                        list.appendChild(item);
+                    });
+                    detailsContainer.appendChild(list);
+                }
+            } catch (error) {
+                console.error('Could not fetch track details:', error);
+            }
         } else {
             // If user selects the default "Select a track..." option
             if (currentGpxLayer) {
