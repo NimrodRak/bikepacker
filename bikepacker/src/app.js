@@ -62,12 +62,14 @@ app.get('/api/track-details/:trackName', async (req, res) => {
             }
 
             const geocodingPromises = detailsJson.stops.map(async (stop) => {
-                const url = `https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(stop.city)}&apiKey=${apiKey}&limit=1`;
+                const url = `https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(stop.city)}&format=json&apiKey=${apiKey}&limit=1`;
+                console.log(url)
                 const response = await fetch(url);
+                console.log(response)
                 const data = await response.json();
-                if (data.features && data.features.length > 0) {
-                    const [lon, lat] = data.features[0].geometry.coordinates;
-                    return { ...stop, coordinates: [lat, lon] }; // Add coordinates to the stop object
+                if (data.results && data.results.length > 0) {
+                    const coords = data.results[0];
+                    return { ...stop, coordinates: [coords.lat, coords.lon] }; // Add coordinates to the stop object
                 }
                 return { ...stop, coordinates: null }; // Return stop without coordinates if not found
             });
