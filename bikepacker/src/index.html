@@ -82,6 +82,24 @@
         border: 2px solid white;
         box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.3);
       }
+      .stops-list {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+      }
+      .stops-list li a {
+        display: block;
+        padding: 8px 12px;
+        text-decoration: none;
+        color: #007bff;
+        background-color: #fff;
+        border-bottom: 1px solid #ddd;
+        transition: background-color 0.2s;
+      }
+      .stops-list li a:hover {
+        background-color: #e9ecef;
+      }
     </style>
   </head>
   <body>
@@ -98,7 +116,7 @@
           <select id="gpx-select" title="Select a track"></select>
         </div>
         <div id="track-details-container">
-          <!-- Details from route.txt will be inserted here by map.js -->
+          <!-- Details from route.json will be inserted here by map.js -->
         </div>
       </div>
     </div>

@@ -1,0 +1,12 @@
+{
+    "stops": [
+        {
+            "city": "Béziers",
+            "description": "A charming town with a rich history and beautiful architecture.",
+            "coordinates": [
+                43.3476,
+                3.219
+            ]
+        }
+    ]
+}

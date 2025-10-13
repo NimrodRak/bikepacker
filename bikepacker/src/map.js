@@ -284,6 +284,31 @@ document.addEventListener('DOMContentLoaded', function () {
         }).addTo(map);
     }
 
+    /**
+     * Finds the index of the point in allTrackPoints that is closest to the given stop coordinates.
+     * @param {L.LatLng} stopLatLng - The coordinates of the stop.
+     * @returns {number} The index of the closest point in allTrackPoints.
+     */
+    function findNearestTrackPointIndex(stopLatLng) {
+        if (!allTrackPoints || allTrackPoints.length === 0) {
+            return -1;
+        }
+
+        let nearestIndex = -1;
+        let minDistance = Infinity;
+
+        allTrackPoints.forEach((trackPoint, index) => {
+            const distance = stopLatLng.distanceTo(trackPoint);
+            if (distance < minDistance) {
+                minDistance = distance;
+                nearestIndex = index;
+            }
+        });
+
+        return nearestIndex;
+    }
+
+
     // Fetch GPX files and populate the dropdown
     fetch('/api/gpx-files')
         .then(response => response.json())
@@ -312,20 +337,38 @@ document.addEventListener('DOMContentLoaded', function () {
             const gpxUrl = `/assets/${selectedTrackName}/route.gpx`;
             loadGpxTrack(gpxUrl);
 
-            // 2. Fetch and display the track details from route.txt
+            // 2. Fetch and display the track details from route.json
             try {
                 const response = await fetch(`/api/track-details/${selectedTrackName}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                const text = await response.text();
-                const lines = text.split('\n').filter(line => line.trim() !== ''); // Split by line and remove empty lines
+                const details = await response.json();
 
-                if (lines.length > 0) {
+                if (details && details.stops && details.stops.length > 0) {
                     const list = document.createElement('ul');
-                    lines.forEach(line => {
+                    list.className = 'stops-list'; // For styling
+
+                    details.stops.forEach(stop => {
                         const item = document.createElement('li');
-                        item.textContent = line;
+                        const link = document.createElement('a');
+                        link.href = '#';
+                        link.textContent = stop.city;
+                        link.title = stop.description || `Go to ${stop.city}`;
+
+                        link.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            const stopLatLng = L.latLng(stop.coordinates[0], stop.coordinates[1]);
+                            const nearestIndex = findNearestTrackPointIndex(stopLatLng);
+
+                            if (nearestIndex !== -1) {
+                                trackSlider.value = nearestIndex;
+                                // Manually trigger the 'input' event to update the map and chart
+                                trackSlider.dispatchEvent(new Event('input'));
+                            }
+                        });
+
+                        item.appendChild(link);
                         list.appendChild(item);
                     });
                     detailsContainer.appendChild(list);

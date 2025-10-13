@@ -33,22 +33,25 @@ app.get('/api/gpx-files', async (req, res) => {
     }
 });
 
-// API endpoint to get the details from route.txt for a specific track
+// API endpoint to get the details from route.json for a specific track
 app.get('/api/track-details/:trackName', async (req, res) => {
     const trackName = req.params.trackName;
     // Basic sanitization to prevent directory traversal
     if (trackName.includes('..') || trackName.includes('/')) {
         return res.status(400).json({ error: 'Invalid track name.' });
     }
-    const detailsPath = path.join(assetsPath, trackName, 'route.txt');
+    const detailsPath = path.join(assetsPath, trackName, 'route.json');
 
     try {
         const detailsContent = await fs.readFile(detailsPath, 'utf-8');
-        res.send(detailsContent);
+        // Try to parse as JSON, if it fails, it will be caught.
+        const detailsJson = JSON.parse(detailsContent);
+        res.json(detailsJson);
     } catch (error) {
         console.error(`Error reading details for track '${trackName}':`, error);
-        // If route.txt doesn't exist, send an empty response instead of an error
-        res.send('');
+        // If route.json doesn't exist, is empty, or is not valid JSON,
+        // send a default structure to prevent frontend errors.
+        res.json({ stops: [] });
     }
 });
 
