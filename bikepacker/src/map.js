@@ -308,7 +308,6 @@ document.addEventListener('DOMContentLoaded', function () {
         return nearestIndex;
     }
 
-
     // Fetch GPX files and populate the dropdown
     fetch('/api/gpx-files')
         .then(response => response.json())
@@ -349,28 +348,40 @@ document.addEventListener('DOMContentLoaded', function () {
                     const list = document.createElement('ul');
                     list.className = 'stops-list'; // For styling
 
-                    details.stops.forEach(stop => {
+                    for (const stop of details.stops) {
                         const item = document.createElement('li');
                         const link = document.createElement('a');
                         link.href = '#';
                         link.textContent = stop.city;
-                        link.title = stop.description || `Go to ${stop.city}`;
+                        link.title = `Go to ${stop.city}`;
 
                         link.addEventListener('click', (e) => {
                             e.preventDefault();
-                            const stopLatLng = L.latLng(stop.coordinates[0], stop.coordinates[1]);
-                            const nearestIndex = findNearestTrackPointIndex(stopLatLng);
+                            // Coordinates are now provided by the server
+                            if (stop.coordinates) {
+                                const stopLatLng = L.latLng(stop.coordinates[0], stop.coordinates[1]);
+                                const nearestIndex = findNearestTrackPointIndex(stopLatLng);
 
-                            if (nearestIndex !== -1) {
-                                trackSlider.value = nearestIndex;
-                                // Manually trigger the 'input' event to update the map and chart
-                                trackSlider.dispatchEvent(new Event('input'));
+                                if (nearestIndex !== -1) {
+                                    trackSlider.value = nearestIndex;
+                                    // Manually trigger the 'input' event to update the map and chart
+                                    trackSlider.dispatchEvent(new Event('input'));
+                                }
+                            } else {
+                                console.warn(`No coordinates found for stop: "${stop.city}"`);
+                                alert(`Could not find coordinates for "${stop.city}". The stop may not be on the map.`);
                             }
                         });
 
                         item.appendChild(link);
+                        if (stop.description) {
+                            const descriptionDiv = document.createElement('div');
+                            descriptionDiv.className = 'stop-description';
+                            descriptionDiv.textContent = stop.description;
+                            item.appendChild(descriptionDiv);
+                        }
                         list.appendChild(item);
-                    });
+                    }
                     detailsContainer.appendChild(list);
                 }
             } catch (error) {
