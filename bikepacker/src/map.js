@@ -23,7 +23,6 @@ function createOrUpdateAltitudeChart(distances, altitudes, max_distance) {
     }
 
     const altitudeLineData = altitudes.map((ele, i) => ({ x: distances[i], y: ele }));
-    console.log(distances)
     const initialDotData = distances.length > 0 ? [{ x: distances[0], y: altitudes[0] }] : [];
 
     // Calculate min and max altitude for y-axis normalization
@@ -263,7 +262,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 trackAltitudes = elevationDataRaw.map(p => p[1] === undefined || p[1] === null ? null : parseFloat(p[1]));
 
                 createOrUpdateAltitudeChart(trackDistances, trackAltitudes, e.target.get_distance() / 1000);
-                document.getElementById('altitude-chart-container').style.display = 'block';
 
                 if (altitudeChart && trackDistances.length > 0 && trackAltitudes.length > 0) {
                     altitudeChart.data.datasets[1].data = [{ x: trackDistances[0], y: trackAltitudes[0] }];
@@ -273,12 +271,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 trackDistances = [];
                 trackAltitudes = [];
                 createOrUpdateAltitudeChart([], [], null);
-                console.log("No elevation data found in GPX.");
             }
-
-            console.log(`GPX file loaded: ${gpxUrl}`);
         }).on('error', function (e) {
-            console.error("Error loading GPX file:", e.error || e);
             alert("Error loading GPX file. Please ensure it's a valid GPX format.");
             cleanupTrackElements();
         }).addTo(map);
@@ -321,7 +315,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         })
         .catch(error => {
-            console.error('Failed to fetch GPX files:', error);
             gpxSelect.innerHTML = '<option value="">Could not load tracks</option>';
         });
 
@@ -368,7 +361,6 @@ document.addEventListener('DOMContentLoaded', function () {
                                     trackSlider.dispatchEvent(new Event('input'));
                                 }
                             } else {
-                                console.warn(`No coordinates found for stop: "${stop.city}"`);
                                 alert(`Could not find coordinates for "${stop.city}". The stop may not be on the map.`);
                             }
                         });
@@ -385,7 +377,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     detailsContainer.appendChild(list);
                 }
             } catch (error) {
-                console.error('Could not fetch track details:', error);
+                // Errors are handled by the server, but a catch block is good practice.
             }
         } else {
             // If user selects the default "Select a track..." option
@@ -425,5 +417,4 @@ document.addEventListener('DOMContentLoaded', function () {
 
     });
 
-    console.log("Map initialized. Ready to select a GPX file.");
 });
