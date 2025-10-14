@@ -1,0 +1,20 @@
+{
+    "stops": [
+        {
+            "city": "Vienna",
+            "description": "The capital of Austria, known for its artistic and intellectual legacy."
+        },
+        {
+            "city": "Znojmo",
+            "description": "A historic town in the Czech Republic, famous for its medieval architecture and wine production."
+        },
+        {
+            "city": "Valtice",
+            "description": "A small town in the Czech Republic, renowned for its baroque chateau and vineyards."
+        },
+        {
+            "city": "Brno",
+            "description": "The second largest city in the Czech Republic, known for its modernist architecture and vibrant cultural scene."
+        }
+    ]
+}
