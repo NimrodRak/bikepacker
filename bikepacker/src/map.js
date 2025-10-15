@@ -223,7 +223,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         currentGpxLayer = new L.GPX(gpxUrl, {
             async: true,
-            gpx_options: { parseElements: ["track"] },
+            gpx_options: { parseElements: ["track"], joinTrackSegments: false },
             marker_options: {
                 startIconUrl: null,
                 endIconUrl: null,
