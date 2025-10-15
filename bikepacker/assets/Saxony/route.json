@@ -28,7 +28,8 @@
             "description": "Concentration camp memorial site."
         },
         {
-            "city": "Hartzor",
+            "displayName": "Hartzor",
+            "city": "Hartzor, Nordhausen",
             "type": "sleep",
             "description": "Small town not far from Nordhausen"
         },
