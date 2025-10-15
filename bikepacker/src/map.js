@@ -229,17 +229,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 endIconUrl: null,
                 shadowUrl: null,
             }
-        }).on('loaded', function (e) {
-            console.log("GPX 'loaded' event fired.");
+        }).on('loaded', function (e) {;
             map.fitBounds(e.target.getBounds());
             allTrackPoints = []; // Reset points
 
             const gpxLayers = e.target.getLayers();
-            console.log("GPX Layers created by library:", gpxLayers);
             gpxLayers.forEach(trkLayer => {
                 if (trkLayer instanceof L.Polyline) {
+                    console.log(`Processing a layer of type: ${trkLayer.constructor.name}`);
                     const latlngs = trkLayer.getLatLngs();
-                    console.log("Processing a track segment. LatLngs structure:", latlngs);
                     // Flatten the latlngs array to handle multi-segment tracks correctly.
                     allTrackPoints.push(...latlngs.flat(Infinity));
                 }
@@ -251,7 +249,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 trackSlider.min = 0;
                 trackSlider.max = allTrackPoints.length - 1;
                 trackSlider.value = 0;
-                console.log(`Slider configured: min=0, max=${trackSlider.max}`);
 
                 if (!trackMarker) {
                     trackMarker = L.marker(allTrackPoints[0], { icon: dotIcon }).addTo(map);
@@ -263,26 +260,20 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             const elevationDataRaw = e.target.get_elevation_data();
-            console.log("Raw elevation data from library:", JSON.parse(JSON.stringify(elevationDataRaw)));
 
             let flattenedElevationData = [];
             // Check if the first element is an array of points (multi-segment) or a point itself (single-segment)
             if (elevationDataRaw.length > 0 && Array.isArray(elevationDataRaw[0][0])) {
-                console.log("Detected multi-segment elevation data. Flattening...");
                 flattenedElevationData = elevationDataRaw.flat(); // Multi-segment case
             } else {
-                console.log("Detected single-segment elevation data. Using as is.");
                 flattenedElevationData = elevationDataRaw; // Single-segment case
             }
-            console.log(`Total elevation points after processing: ${flattenedElevationData.length}`);
 
             if (flattenedElevationData && flattenedElevationData.length > 0) {
                 trackDistances = flattenedElevationData.map(p => p[0] / 1000);
                 trackAltitudes = flattenedElevationData.map(p => p[1] === undefined || p[1] === null ? null : parseFloat(p[1]));
 
                 createOrUpdateAltitudeChart(trackDistances, trackAltitudes, e.target.get_distance() / 1000);
-
-                console.log(`Data length check: allTrackPoints=${allTrackPoints.length}, trackDistances=${trackDistances.length}, trackAltitudes=${trackAltitudes.length}`);
 
                 if (altitudeChart && trackDistances.length > 0 && trackAltitudes.length > 0) {
                     altitudeChart.data.datasets[1].data = [{ x: trackDistances[0], y: trackAltitudes[0] }];
@@ -306,7 +297,6 @@ document.addEventListener('DOMContentLoaded', function () {
      * @returns {number} The index of the closest point in allTrackPoints.
      */
     function findNearestTrackPointIndex(stopLatLng) {
-        console.log(`Finding nearest point for stop at:`, stopLatLng);
         if (!allTrackPoints || allTrackPoints.length === 0) {
             return -1;
         }
@@ -321,7 +311,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 nearestIndex = index;
             }
         });
-        console.log(`Found nearest point at index: ${nearestIndex}`);
         return nearestIndex;
     }
 
@@ -390,7 +379,6 @@ document.addEventListener('DOMContentLoaded', function () {
                                 const stopLatLng = L.latLng(stop.coordinates[0], stop.coordinates[1]);
                                 const nearestIndex = findNearestTrackPointIndex(stopLatLng);
 
-                                console.log(`Click on stop "${stop.city}". Nearest track index: ${nearestIndex}`);
                                 if (nearestIndex !== -1) {
                                     trackSlider.value = nearestIndex;
                                     // Manually trigger the 'input' event to update the map and chart
@@ -433,7 +421,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // Event listener for the slider
     trackSlider.addEventListener('input', function () {
         const pointIndex = parseInt(this.value, 10);
-        // console.log(`Slider input event: index=${pointIndex}`); // This can be very noisy, uncomment if needed
         if (trackMarker && allTrackPoints.length > 0) {
             if (pointIndex >= 0 && pointIndex < allTrackPoints.length) {
                 const currentPoint = allTrackPoints[pointIndex];
