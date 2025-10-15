@@ -127,8 +127,12 @@
         animation: spin 1s linear infinite;
       }
       @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
       }
     </style>
   </head>
@@ -136,34 +140,7 @@
     <div id="container">
       <div id="map-container">
         <div id="map"></div>
-        <div id="loading-overlay" style="display: none;">
-          <div class="spinner"></div>
-        </div>
-        <div id="altitude-chart-container">
-          <canvas id="altitude-chart"></canvas>
-          <input type="range" id="track-slider" min="0" max="100" value="0" />
-        </div>
-      </div>
-      <div id="controls-container">
-        <div id="upload-section">
-          <select id="gpx-select" title="Select a track"></select>
-        </div>
-        <div id="track-details-container">
-          <!-- Details from route.json will be inserted here by map.js -->
-        </div>
-      </div>
-    </div>
-    <script type="module" src="map.js"></script>
-  </body>
-</html>
-      }
-    </style>
-  </head>
-  <body>
-    <div id="container">
-      <div id="map-container">
-        <div id="map"></div>
-        <div id="loading-overlay" style="display: none;">
+        <div id="loading-overlay" style="display: none">
           <div class="spinner"></div>
         </div>
         <div id="altitude-chart-container">
