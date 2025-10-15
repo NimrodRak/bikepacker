@@ -351,7 +351,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         let displayName = stop.displayName || stop.city;
                         if (stop.type === 'sleep') {
                             item.className = 'stop-item-sleep';
-                            displayName += ' 🛏️';
+                            displayName = '🛏️ ' + displayName;
                         } else {
                             item.className = 'stop-item-default';
                         }

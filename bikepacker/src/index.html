@@ -37,7 +37,9 @@
         background-color: #f0f0f0;
         display: flex;
         flex-direction: column;
-        align-items: flex-start; /* Align items to the top */
+        /* The height of a flex item in a flex row is stretched by default.
+           We add overflow-y: auto to make its content scrollable. */
+        overflow-y: auto;
       }
       #upload-section {
         width: 100%;
@@ -47,6 +49,13 @@
         width: 100%; /* Make dropdown take full width */
         padding: 5px;
         font-size: 1em;
+      }
+      #track-details-container {
+        width: 100%;
+        /* This allows the container to grow and enables scrolling
+           when content overflows the available space. */
+        flex: 1;
+        overflow-y: auto;
       }
       #altitude-chart-container {
         position: absolute;
