@@ -34,46 +34,214 @@
         margin-bottom: 0.5em;
       }
 
-      #gpx-select {
-        min-width: 300px;
-        padding: 12px;
+      /* Bike Loader Styles */
+      #bike-loader {
+        display: flex; /* Initially shown */
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+      }
+      .bike {
+        position: relative;
+        width: 200px;
+        height: 100px;
+      }
+      .wheel {
+        position: absolute;
+        bottom: 0;
+        width: 70px;
+        height: 70px;
+        border: 5px solid #333;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      .back-wheel {
+        left: 0;
+      }
+      .front-wheel {
+        right: 0;
+      }
+      .wheel::after {
+        content: "";
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background: #333;
+        border-radius: 50%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+      .frame {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+      }
+      /* Frame parts using pseudo-elements */
+      .frame::before,
+      .frame::after {
+        content: "";
+        position: absolute;
+        background: #333;
+      }
+      /* Main frame bar */
+      .frame::before {
+        width: 95px;
+        height: 5px;
+        top: 30px;
+        left: 35px;
+        transform: skewX(30deg);
+      }
+      /* Seat post and handlebars bar */
+      .frame::after {
+        width: 5px;
+        height: 35px;
+        left: 35px;
+        top: 30px;
+        transform: skewX(-40deg);
+        box-shadow: 125px 0 0 #333; /* Handlebar post */
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Custom Select Dropdown */
+      .custom-select-container {
+        position: relative;
+        width: 320px;
+        display: none; /* Hidden until loader is done */
+      }
+      .custom-select-trigger {
+        width: 100%;
+        padding: 12px 15px;
         font-size: 1.2em;
-        border-radius: 8px;
+        background-color: #fff;
         border: 1px solid #ccc;
+        border-radius: 8px;
+        cursor: pointer;
+        text-align: center;
+        box-sizing: border-box;
+        transition: border-color 0.2s;
+      }
+      .custom-select-trigger::after {
+        content: "▼";
+        font-size: 0.6em;
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        transition: transform 0.3s ease;
+      }
+      .custom-select-container.open .custom-select-trigger::after {
+        transform: translateY(-50%) rotate(180deg);
+      }
+      .custom-select-options {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-top: none;
+        border-radius: 0 0 8px 8px;
+        z-index: 10;
+        max-height: 200px;
+        overflow-y: auto;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+      }
+      .custom-select-container.open .custom-select-options {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+      .custom-select-option {
+        padding: 12px 15px;
+        cursor: pointer;
+        text-align: center;
+      }
+      .custom-select-option:hover {
+        background-color: #f0f0f0;
       }
     </style>
   </head>
   <body>
     <h1>BikePacker</h1>
-    <select id="gpx-select" title="Select a track"></select>
+    <div id="bike-loader">
+      <div class="bike">
+        <div class="wheel back-wheel"></div>
+        <div class="wheel front-wheel"></div>
+        <div class="frame"></div>
+      </div>
+    </div>
+    <div class="custom-select-container">
+      <div class="custom-select-trigger">Select a track...</div>
+      <div class="custom-select-options"></div>
+    </div>
 
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        const gpxSelect = document.getElementById("gpx-select");
+        const loader = document.getElementById("bike-loader");
+        const selectContainer = document.querySelector(
+          ".custom-select-container"
+        );
+        const selectTrigger = document.querySelector(".custom-select-trigger");
+        const selectOptions = document.querySelector(".custom-select-options");
 
         // Fetch GPX files and populate the dropdown
         fetch("/api/gpx-files")
           .then((response) => response.json())
           .then((files) => {
-            gpxSelect.innerHTML = '<option value="">Select a track...</option>'; // Default option
             files.forEach((file) => {
-              const option = document.createElement("option");
-              option.value = file;
-              option.textContent = file;
-              gpxSelect.appendChild(option);
+              const optionEl = document.createElement("div");
+              optionEl.classList.add("custom-select-option");
+              optionEl.textContent = file;
+              optionEl.dataset.value = file;
+              selectOptions.appendChild(optionEl);
             });
           })
           .catch((error) => {
-            gpxSelect.innerHTML =
-              '<option value="">Could not load tracks</option>';
+            selectTrigger.textContent = "Could not load tracks";
+          })
+          .finally(() => {
+            // Hide loader and show dropdown regardless of success or failure
+            loader.style.display = "none";
+            selectContainer.style.display = "block";
           });
 
-        // Event listener for the dropdown to navigate to the track page
-        gpxSelect.addEventListener("change", function () {
-          const selectedTrackName = this.value;
-          if (selectedTrackName) {
-            // Navigate to the new page
-            window.location.href = `/${encodeURIComponent(selectedTrackName)}`;
+        // Toggle dropdown visibility
+        selectTrigger.addEventListener("click", () => {
+          selectContainer.classList.toggle("open");
+        });
+
+        // Handle option selection
+        selectOptions.addEventListener("click", (e) => {
+          if (e.target.classList.contains("custom-select-option")) {
+            const selectedValue = e.target.dataset.value;
+            if (selectedValue) {
+              // Navigate to the new page
+              window.location.href = `/${encodeURIComponent(selectedValue)}`;
+            }
+            selectTrigger.textContent = e.target.textContent;
+            selectContainer.classList.remove("open");
+          }
+        });
+
+        // Close dropdown when clicking outside
+        window.addEventListener("click", (e) => {
+          if (!selectContainer.contains(e.target)) {
+            selectContainer.classList.remove("open");
+          }
+        });
+
+        // Close dropdown with Escape key
+        window.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") {
+            selectContainer.classList.remove("open");
           }
         });
       });
