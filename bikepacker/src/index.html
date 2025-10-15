@@ -4,6 +4,10 @@
     <title>BikePacker</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚲</text></svg>"
+    />
+    <link
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     />
@@ -15,164 +19,64 @@
         margin: 0;
         padding: 0;
         height: 100%;
-        font-family: Arial, sans-serif;
-      }
-      #container {
-        display: flex;
-        height: 100%;
-      }
-      #map-container {
-        flex: 7; /* Adjusted flex ratio */
-        height: 100%; /* Left two-thirds */
-        position: relative; /* For absolute positioning of slider-container */
-      }
-      #map {
-        width: 100%;
-        height: 100%;
-      }
-      #controls-container {
-        flex: 3; /* Adjusted flex ratio */
-        padding: 20px;
-        box-sizing: border-box;
-        background-color: #f0f0f0;
-        display: flex;
-        flex-direction: column;
-        /* The height of a flex item in a flex row is stretched by default.
-           We add overflow-y: auto to make its content scrollable. */
-        overflow-y: auto;
-      }
-      #upload-section {
-        width: 100%;
-        margin-bottom: 20px;
-      }
-      #gpx-select {
-        width: 100%; /* Make dropdown take full width */
-        padding: 5px;
-        font-size: 1em;
-      }
-      #track-details-container {
-        width: 100%;
-        /* This allows the container to grow and enables scrolling
-           when content overflows the available space. */
-        flex: 1;
-        overflow-y: auto;
-      }
-      #altitude-chart-container {
-        position: absolute;
-        bottom: 30px; /* Positioned above the slider (slider is at 30px, allow ~50px for slider height + spacing) */
-        left: 20px; /* Consistent padding with slider */
-        width: calc(100% - 40px); /* Full width minus padding */
-        height: 100px; /* Fixed height for the chart area */
-        padding: 10px; /* Padding inside the chart container */
-        background-color: rgba(
-          255,
-          255,
-          255,
-          0.9
-        ); /* Semi-transparent white background */
-        border-radius: 8px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-        z-index: 1000; /* Ensure it's above map tiles but below modals if any */
-        box-sizing: border-box;
-        display: none; /* Initially hidden, shown by JS when track loads */
-      }
-      #altitude-chart {
-        width: 100%;
-        height: 100%;
-      }
-      #track-slider {
-        width: 100%;
-        cursor: pointer;
-      }
-      .track-dot-icon {
-        /* Custom styling for the moving dot */
-        background-color: #ff4500; /* OrangeRed */
-        border-radius: 50%;
-        border: 2px solid white;
-        box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.3);
-      }
-      .stops-list {
-        list-style-type: none;
-        padding: 0;
-        margin: 0;
-        width: 100%;
-      }
-      .stops-list li a {
-        display: block;
-        padding: 8px 12px;
-        text-decoration: none;
-        color: #007bff;
-        background-color: #fff;
-        border-bottom: 1px solid #ddd;
-        transition: background-color 0.2s;
-      }
-      .stops-list li.stop-item-sleep a {
-        font-size: 1.05em; /* A bit bigger */
-        font-weight: 600;
-      }
-      .stops-list li.stop-item-default a {
-        font-size: 0.95em; /* A bit smaller */
-      }
-      .stops-list li a:hover {
-        background-color: #e9ecef;
-      }
-      .stop-description {
-        padding: 4px 12px 10px 12px;
-        font-size: 0.9em;
-        color: #666;
-        background-color: #fff;
-      }
-      #loading-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(255, 255, 255, 0.8);
-        z-index: 2000; /* High z-index to be on top */
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+          "Segoe UI Symbol";
         display: flex;
         justify-content: center;
         align-items: center;
+        flex-direction: column;
+        background-color: #f4f7f6;
       }
-      .spinner {
-        border: 8px solid #f3f3f3; /* Light grey */
-        border-top: 8px solid #3498db; /* Blue */
-        border-radius: 50%;
-        width: 60px;
-        height: 60px;
-        animation: spin 1s linear infinite;
+      h1 {
+        font-size: 3em;
+        color: #333;
+        margin-bottom: 0.5em;
       }
-      @keyframes spin {
-        0% {
-          transform: rotate(0deg);
-        }
-        100% {
-          transform: rotate(360deg);
-        }
+
+      #gpx-select {
+        min-width: 300px;
+        padding: 12px;
+        font-size: 1.2em;
+        border-radius: 8px;
+        border: 1px solid #ccc;
       }
     </style>
   </head>
   <body>
-    <div id="container">
-      <div id="map-container">
-        <div id="map"></div>
-        <div id="loading-overlay" style="display: none">
-          <div class="spinner"></div>
-        </div>
-        <div id="altitude-chart-container">
-          <canvas id="altitude-chart"></canvas>
-          <input type="range" id="track-slider" min="0" max="100" value="0" />
-        </div>
-      </div>
-      <div id="controls-container">
-        <div id="upload-section">
-          <select id="gpx-select" title="Select a track"></select>
-        </div>
-        <div id="track-details-container">
-          <!-- Details from route.json will be inserted here by map.js -->
-        </div>
-      </div>
-    </div>
-    <script type="module" src="map.js"></script>
+    <h1>BikePacker</h1>
+    <select id="gpx-select" title="Select a track"></select>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const gpxSelect = document.getElementById("gpx-select");
+
+        // Fetch GPX files and populate the dropdown
+        fetch("/api/gpx-files")
+          .then((response) => response.json())
+          .then((files) => {
+            gpxSelect.innerHTML = '<option value="">Select a track...</option>'; // Default option
+            files.forEach((file) => {
+              const option = document.createElement("option");
+              option.value = file;
+              option.textContent = file;
+              gpxSelect.appendChild(option);
+            });
+          })
+          .catch((error) => {
+            gpxSelect.innerHTML =
+              '<option value="">Could not load tracks</option>';
+          });
+
+        // Event listener for the dropdown to navigate to the track page
+        gpxSelect.addEventListener("change", function () {
+          const selectedTrackName = this.value;
+          if (selectedTrackName) {
+            // Navigate to the new page
+            window.location.href = `/${encodeURIComponent(selectedTrackName)}`;
+          }
+        });
+      });
+    </script>
   </body>
 </html>

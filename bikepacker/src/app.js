@@ -18,7 +18,7 @@ const assetsPath = path.join(__dirname, '../assets');
 const app = express()
 const port = 3000
 
-// Serve static files from the 'src' directory (where this script lives)
+// Serve static files (like map.js, css, etc.) from the 'src' directory
 app.use(express.static(__dirname));
 
 // Serve static files from the 'assets' directory under the /assets route
@@ -83,8 +83,13 @@ app.get('/api/track-details/:trackName', async (req, res) => {
 });
 
 app.get('/', (req, res) => {
-    // Send the index.html file
+    // Send the main menu page
     res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.get('/:trackName', (req, res) => {
+    // For any other top-level route, serve the track page template.
+    res.sendFile(path.join(__dirname, 'track.html'));
 });
 
 

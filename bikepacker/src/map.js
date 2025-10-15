@@ -180,7 +180,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }).addTo(map);
 
     // Slider and marker related variables
-    const gpxSelect = document.getElementById('gpx-select');
     const sliderContainer = document.getElementById('altitude-chart-container');
     const trackSlider = document.getElementById('track-slider');
     let trackMarker = null;
@@ -233,24 +232,23 @@ document.addEventListener('DOMContentLoaded', function () {
             map.fitBounds(e.target.getBounds());
             allTrackPoints = []; // Reset points
 
+            // Helper to process a polyline and add its points to the main array
+            const addPointsFromPolyline = (polyline) => {
+                if (polyline instanceof L.Polyline) {
+                    const latlngs = polyline.getLatLngs();
+                    allTrackPoints.push(...latlngs.flat(Infinity));
+                }
+            };
+
             const gpxLayers = e.target.getLayers();
             gpxLayers.forEach(trkLayer => {
-                console.log(`Processing a layer of type: ${trkLayer.constructor.name}`);
                 if (trkLayer instanceof L.Polyline) { // Handles single-segment tracks
-                    const latlngs = trkLayer.getLatLngs();
-                    // Flatten the latlngs array to handle multi-segment tracks correctly.
-                    allTrackPoints.push(...latlngs.flat(Infinity));
-                } else if (trkLayer._layers) { // Handles multi-segment tracks wrapped in a FeatureGroup
-                    // Iterate over the layers within the group
-                    Object.values(trkLayer._layers).forEach(poly => {
-                        if (poly instanceof L.Polyline) {
-                            const latlngs = poly.getLatLngs();
-                            allTrackPoints.push(...latlngs.flat(Infinity));
-                        }
-                    });
+                    addPointsFromPolyline(trkLayer);
+                } else if (trkLayer instanceof L.FeatureGroup) { // Handles multi-segment tracks wrapped in a FeatureGroup
+                    // Iterate over the layers within the group using the public API
+                    trkLayer.getLayers().forEach(addPointsFromPolyline);
                 }
             });
-            console.log(`Total track points after processing all segments: ${allTrackPoints.length}`);
 
             if (allTrackPoints.length > 0) {
                 sliderContainer.style.display = 'block';
@@ -322,44 +320,33 @@ document.addEventListener('DOMContentLoaded', function () {
         return nearestIndex;
     }
 
-    // Fetch GPX files and populate the dropdown
-    fetch('/api/gpx-files')
-        .then(response => response.json())
-        .then(files => {
-            gpxSelect.innerHTML = '<option value="">Select a track...</option>'; // Default option
-            files.forEach(file => {
-                const option = document.createElement('option');
-                option.value = file;
-                option.textContent = file;
-                gpxSelect.appendChild(option);
-            });
-        })
-        .catch(error => {
-            gpxSelect.innerHTML = '<option value="">Could not load tracks</option>';
-        });
-
-    // Event listener for the dropdown
-    gpxSelect.addEventListener('change', async function () {
-        const selectedTrackName = this.value;
+    /**
+     * Main function to load and display a track based on its name.
+     * @param {string} trackName - The name of the track directory.
+     */
+    async function loadTrack(trackName) {
         const detailsContainer = document.getElementById('track-details-container');
         const loadingOverlay = document.getElementById('loading-overlay');
         detailsContainer.innerHTML = ''; // Clear previous details
 
-        if (selectedTrackName) {
+        if (trackName) {
             loadingOverlay.style.display = 'flex'; // Show loading spinner
 
             // 1. Load the GPX track for the map
             // Note: loadGpxTrack is async in its operations (file fetching, parsing)
-            const gpxUrl = `/assets/${selectedTrackName}/route.gpx`;
+            const gpxUrl = `/assets/${trackName}/route.gpx`;
             loadGpxTrack(gpxUrl);
 
             // 2. Fetch and display the track details from route.json
             try {
-                const response = await fetch(`/api/track-details/${selectedTrackName}`);
+                const response = await fetch(`/api/track-details/${trackName}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const details = await response.json();
+
+                // Set the page title
+                document.title = `${trackName} | BikePacker`;
 
                 if (details && details.stops && details.stops.length > 0) {
                     const list = document.createElement('ul');
@@ -371,30 +358,26 @@ document.addEventListener('DOMContentLoaded', function () {
                         let displayName = stop.displayName || stop.city;
                         if (stop.type === 'sleep') {
                             item.className = 'stop-item-sleep';
-                            displayName = '🛏️ ' + displayName;
+                            displayName = '🛏️ ' + displayName; // Prepending emoji
                         } else {
                             item.className = 'stop-item-default';
                         }
 
                         link.href = '#';
-                        link.textContent = displayName; // Now includes emoji if applicable
+                        link.textContent = displayName;
                         link.title = `Go to ${stop.city}`;
-
                         link.addEventListener('click', (e) => {
                             e.preventDefault();
-                            // Coordinates are now provided by the server
                             if (stop.coordinates) {
                                 const stopLatLng = L.latLng(stop.coordinates[0], stop.coordinates[1]);
                                 const nearestIndex = findNearestTrackPointIndex(stopLatLng);
-
                                 if (nearestIndex !== -1) {
                                     trackSlider.value = nearestIndex;
-                                    // Manually trigger the 'input' event to update the map and chart
                                     trackSlider.dispatchEvent(new Event('input'));
                                 }
                             } else {
                                 console.warn(`No coordinates found for stop: "${stop.city}"`);
-                                alert(`Could not find coordinates for "${stop.city}". The stop may not be on the map.`);
+                                alert(`Could not find coordinates for "${stop.city}".`);
                             }
                         });
 
@@ -414,17 +397,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 detailsContainer.innerHTML = '<p>Could not load track details.</p>';
             }
             loadingOverlay.style.display = 'none'; // Hide loading spinner
-        } else {
-            // If user selects the default "Select a track..." option
-            if (currentGpxLayer) {
-                map.removeLayer(currentGpxLayer);
-                currentGpxLayer = null;
-            }
-            loadingOverlay.style.display = 'none';
-            cleanupTrackElements();
-            createOrUpdateAltitudeChart([], [], null);
         }
-    });
+    }
+
+    // --- Main execution on page load ---
+    const trackName = decodeURIComponent(window.location.pathname.substring(1));
+    loadTrack(trackName);
 
     // Event listener for the slider
     trackSlider.addEventListener('input', function () {
