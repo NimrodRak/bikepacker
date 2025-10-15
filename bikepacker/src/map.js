@@ -322,10 +322,14 @@ document.addEventListener('DOMContentLoaded', function () {
     gpxSelect.addEventListener('change', async function () {
         const selectedTrackName = this.value;
         const detailsContainer = document.getElementById('track-details-container');
+        const loadingOverlay = document.getElementById('loading-overlay');
         detailsContainer.innerHTML = ''; // Clear previous details
 
         if (selectedTrackName) {
+            loadingOverlay.style.display = 'flex'; // Show loading spinner
+
             // 1. Load the GPX track for the map
+            // Note: loadGpxTrack is async in its operations (file fetching, parsing)
             const gpxUrl = `/assets/${selectedTrackName}/route.gpx`;
             loadGpxTrack(gpxUrl);
 
@@ -344,8 +348,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     for (const stop of details.stops) {
                         const item = document.createElement('li');
                         const link = document.createElement('a');
+                        const displayName = stop.displayName || stop.city;
                         link.href = '#';
-                        link.textContent = stop.city;
+                        link.textContent = displayName;
                         link.title = `Go to ${stop.city}`;
 
                         link.addEventListener('click', (e) => {
@@ -377,14 +382,17 @@ document.addEventListener('DOMContentLoaded', function () {
                     detailsContainer.appendChild(list);
                 }
             } catch (error) {
-                // Errors are handled by the server, but a catch block is good practice.
+                console.error("Error fetching track details:", error);
+                detailsContainer.innerHTML = '<p>Could not load track details.</p>';
             }
+            loadingOverlay.style.display = 'none'; // Hide loading spinner
         } else {
             // If user selects the default "Select a track..." option
             if (currentGpxLayer) {
                 map.removeLayer(currentGpxLayer);
                 currentGpxLayer = null;
             }
+            loadingOverlay.style.display = 'none';
             cleanupTrackElements();
             createOrUpdateAltitudeChart([], [], null);
         }

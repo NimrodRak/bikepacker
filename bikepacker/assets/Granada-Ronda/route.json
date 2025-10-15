@@ -17,7 +17,8 @@
             "description": "A port city on southern Spain’s Costa del Sol, known for its beaches, art museums, and historic sites."
         },
         {
-            "city": "El Chorro",
+            "city": "El Chorro, Ronda",
+            "displayName": "El Chorro (Caminito del Rey)",
             "description": "A small village in the province of Málaga, famous for the Caminito del Rey walkway and stunning natural scenery."
         },
         {

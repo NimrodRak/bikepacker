@@ -106,12 +106,66 @@
         color: #666;
         background-color: #fff;
       }
+      #loading-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.8);
+        z-index: 2000; /* High z-index to be on top */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .spinner {
+        border: 8px solid #f3f3f3; /* Light grey */
+        border-top: 8px solid #3498db; /* Blue */
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
     </style>
   </head>
   <body>
     <div id="container">
       <div id="map-container">
         <div id="map"></div>
+        <div id="loading-overlay" style="display: none;">
+          <div class="spinner"></div>
+        </div>
+        <div id="altitude-chart-container">
+          <canvas id="altitude-chart"></canvas>
+          <input type="range" id="track-slider" min="0" max="100" value="0" />
+        </div>
+      </div>
+      <div id="controls-container">
+        <div id="upload-section">
+          <select id="gpx-select" title="Select a track"></select>
+        </div>
+        <div id="track-details-container">
+          <!-- Details from route.json will be inserted here by map.js -->
+        </div>
+      </div>
+    </div>
+    <script type="module" src="map.js"></script>
+  </body>
+</html>
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <div id="map-container">
+        <div id="map"></div>
+        <div id="loading-overlay" style="display: none;">
+          <div class="spinner"></div>
+        </div>
         <div id="altitude-chart-container">
           <canvas id="altitude-chart"></canvas>
           <input type="range" id="track-slider" min="0" max="100" value="0" />
