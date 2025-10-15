@@ -258,9 +258,12 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             const elevationDataRaw = e.target.get_elevation_data();
-            if (elevationDataRaw && elevationDataRaw.length > 0) {
-                trackDistances = elevationDataRaw.map(p => p[0] / 1000);
-                trackAltitudes = elevationDataRaw.map(p => p[1] === undefined || p[1] === null ? null : parseFloat(p[1]));
+            // Flatten elevation data to handle multi-segment tracks
+            const flattenedElevationData = elevationDataRaw.flat();
+
+            if (flattenedElevationData && flattenedElevationData.length > 0) {
+                trackDistances = flattenedElevationData.map(p => p[0] / 1000);
+                trackAltitudes = flattenedElevationData.map(p => p[1] === undefined || p[1] === null ? null : parseFloat(p[1]));
 
                 createOrUpdateAltitudeChart(trackDistances, trackAltitudes, e.target.get_distance() / 1000);
 
