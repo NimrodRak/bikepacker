@@ -1,0 +1,40 @@
+{
+    "stops": [
+        {
+            "city": "Luterstadt Wittenberg",
+            "description": "A historic town in Saxony-Anhalt, Germany, known for its association with Martin Luther and the Protestant Reformation."
+        },
+        {
+            "city": "Dessau",
+            "description": "A city in Saxony-Anhalt, Germany, famous for the Bauhaus architectural movement and its modernist buildings."
+        },
+        {
+            "city": "Bernburg",
+            "description": "A town in Saxony-Anhalt, Germany, known for its Renaissance castle and picturesque old town."
+        },
+        {
+            "city": "Nordhausen",
+            "description": "A city in Thuringia, Germany, known for its historic old town and as a center of the German whisky industry."
+        },
+        {
+            "city": "Göttingen",
+            "description": "A university city in Lower Saxony, Germany, known for its rich academic history and vibrant cultural scene."
+        },
+        {
+            "city": "Bad Salzulfen",
+            "description": "A spa town in North Rhine-Westphalia, Germany, known for its therapeutic saltwater baths and wellness facilities."
+        },
+        {
+            "city": "Paderborn",
+            "description": "A city in North Rhine-Westphalia, Germany, known for its historic cathedral and as a center of technology and education."
+        },
+        {
+            "city": "Herford",
+            "description": "A town in North Rhine-Westphalia, Germany, known for its cultural heritage and the Marta Herford museum of contemporary art."
+        },
+        {
+            "city": "Wolfsburg",
+            "description": "A city in Lower Saxony, Germany, known as the headquarters of Volkswagen and for its modern architecture and cultural attractions."
+        }
+    ]
+}
