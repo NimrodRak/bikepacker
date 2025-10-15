@@ -124,18 +124,19 @@
         text-align: center;
         box-sizing: border-box;
         transition: border-color 0.2s;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5em; /* Space between text and arrow */
       }
       .custom-select-trigger::after {
         content: "▼";
         font-size: 0.6em;
-        position: absolute;
-        right: 20px;
-        top: 50%;
-        transform: translateY(-50%);
         transition: transform 0.3s ease;
+        line-height: 1; /* Improves vertical alignment */
       }
       .custom-select-container.open .custom-select-trigger::after {
-        transform: translateY(-50%) rotate(180deg);
+        transform: rotate(180deg);
       }
       .custom-select-options {
         position: absolute;
