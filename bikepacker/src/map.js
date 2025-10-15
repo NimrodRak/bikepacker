@@ -258,8 +258,13 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             const elevationDataRaw = e.target.get_elevation_data();
-            // Flatten elevation data to handle multi-segment tracks
-            const flattenedElevationData = elevationDataRaw.flat();
+            let flattenedElevationData = [];
+            // Check if the first element is an array of points (multi-segment) or a point itself (single-segment)
+            if (elevationDataRaw.length > 0 && Array.isArray(elevationDataRaw[0][0])) {
+                flattenedElevationData = elevationDataRaw.flat(); // Multi-segment case
+            } else {
+                flattenedElevationData = elevationDataRaw; // Single-segment case
+            }
 
             if (flattenedElevationData && flattenedElevationData.length > 0) {
                 trackDistances = flattenedElevationData.map(p => p[0] / 1000);
