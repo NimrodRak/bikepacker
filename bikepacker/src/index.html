@@ -22,7 +22,7 @@
         height: 100%;
       }
       #map-container {
-        flex: 8; /* Adjusted flex ratio */
+        flex: 7; /* Adjusted flex ratio */
         height: 100%; /* Left two-thirds */
         position: relative; /* For absolute positioning of slider-container */
       }
@@ -31,7 +31,7 @@
         height: 100%;
       }
       #controls-container {
-        flex: 2; /* Adjusted flex ratio */
+        flex: 3; /* Adjusted flex ratio */
         padding: 20px;
         box-sizing: border-box;
         background-color: #f0f0f0;
@@ -96,6 +96,13 @@
         background-color: #fff;
         border-bottom: 1px solid #ddd;
         transition: background-color 0.2s;
+      }
+      .stops-list li.stop-item-sleep a {
+        font-size: 1.05em; /* A bit bigger */
+        font-weight: 600;
+      }
+      .stops-list li.stop-item-default a {
+        font-size: 0.95em; /* A bit smaller */
       }
       .stops-list li a:hover {
         background-color: #e9ecef;

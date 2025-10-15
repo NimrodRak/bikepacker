@@ -2,28 +2,34 @@
     "stops": [
         {
             "city": "Granada",
-            "description": "A historic city in southern Spain, known for the Alhambra palace and its rich Moorish heritage."
+            "type": "sleep",
+            "description": "Historic city, home to the Alhambra palace."
         },
         {
             "city": "Alhama de Granada",
-            "description": "A picturesque town in the province of Granada, famous for its thermal baths and stunning gorge views."
+            "type": "sleep",
+            "description": "Picturesque town known for thermal baths and gorge views."
         },
         {
             "city": "Antequera",
-            "description": "A town in Andalusia, Spain, known for its ancient dolmens and Renaissance architecture."
+            "type": "sleep",
+            "description": "Known for ancient dolmens and Renaissance architecture."
         },
         {
             "city": "Málaga",
-            "description": "A port city on southern Spain’s Costa del Sol, known for its beaches, art museums, and historic sites."
+            "type": "sleep",
+            "description": "Port city on Costa del Sol with beaches and museums."
         },
         {
             "city": "El Chorro, Ronda",
             "displayName": "El Chorro (Caminito del Rey)",
-            "description": "A small village in the province of Málaga, famous for the Caminito del Rey walkway and stunning natural scenery."
+            "type": "sleep",
+            "description": "Village famous for the Caminito del Rey walkway."
         },
         {
             "city": "Ronda",
-            "description": "A city in the province of Málaga, Spain, renowned for its dramatic cliffs and the Puente Nuevo bridge spanning the El Tajo gorge."
+            "type": "sleep",
+            "description": "Renowned for its dramatic cliffs and Puente Nuevo bridge."
         }
     ]
 }

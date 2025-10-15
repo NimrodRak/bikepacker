@@ -348,9 +348,16 @@ document.addEventListener('DOMContentLoaded', function () {
                     for (const stop of details.stops) {
                         const item = document.createElement('li');
                         const link = document.createElement('a');
-                        const displayName = stop.displayName || stop.city;
+                        let displayName = stop.displayName || stop.city;
+                        if (stop.type === 'sleep') {
+                            item.className = 'stop-item-sleep';
+                            displayName += ' 🛏️';
+                        } else {
+                            item.className = 'stop-item-default';
+                        }
+
                         link.href = '#';
-                        link.textContent = displayName;
+                        link.textContent = displayName; // Now includes emoji if applicable
                         link.title = `Go to ${stop.city}`;
 
                         link.addEventListener('click', (e) => {

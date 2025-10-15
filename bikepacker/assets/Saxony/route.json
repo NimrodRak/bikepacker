@@ -2,39 +2,48 @@
     "stops": [
         {
             "city": "Luterstadt Wittenberg",
-            "description": "A historic town in Saxony-Anhalt, Germany, known for its association with Martin Luther and the Protestant Reformation."
+            "type": "sleep",
+            "description": "Historic town associated with Martin Luther."
         },
         {
             "city": "Dessau",
-            "description": "A city in Saxony-Anhalt, Germany, famous for the Bauhaus architectural movement and its modernist buildings."
+            "type": "sleep",
+            "description": "Famous for the Bauhaus architectural movement."
         },
         {
             "city": "Bernburg",
-            "description": "A town in Saxony-Anhalt, Germany, known for its Renaissance castle and picturesque old town."
+            "type": "sleep",
+            "description": "Known for its Renaissance castle and old town."
         },
         {
             "city": "Nordhausen",
-            "description": "A city in Thuringia, Germany, known for its historic old town and as a center of the German whisky industry."
+            "type": "sleep",
+            "description": "Historic old town and center of German whisky."
         },
         {
             "city": "Göttingen",
-            "description": "A university city in Lower Saxony, Germany, known for its rich academic history and vibrant cultural scene."
+            "type": "sleep",
+            "description": "University city with a rich academic history."
         },
         {
             "city": "Bad Salzulfen",
-            "description": "A spa town in North Rhine-Westphalia, Germany, known for its therapeutic saltwater baths and wellness facilities."
+            "type": "sleep",
+            "description": "Spa town with therapeutic saltwater baths."
         },
         {
             "city": "Paderborn",
-            "description": "A city in North Rhine-Westphalia, Germany, known for its historic cathedral and as a center of technology and education."
+            "type": "sleep",
+            "description": "Known for its historic cathedral and tech/education."
         },
         {
             "city": "Herford",
-            "description": "A town in North Rhine-Westphalia, Germany, known for its cultural heritage and the Marta Herford museum of contemporary art."
+            "type": "sleep",
+            "description": "Known for the Marta Herford contemporary art museum."
         },
         {
             "city": "Wolfsburg",
-            "description": "A city in Lower Saxony, Germany, known as the headquarters of Volkswagen and for its modern architecture and cultural attractions."
+            "type": "sleep",
+            "description": "Headquarters of Volkswagen, known for modern architecture."
         }
     ]
 }
