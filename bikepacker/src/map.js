@@ -237,7 +237,8 @@ document.addEventListener('DOMContentLoaded', function () {
             gpxLayers.forEach(trkLayer => {
                 if (trkLayer instanceof L.Polyline) {
                     const latlngs = trkLayer.getLatLngs();
-                    allTrackPoints = allTrackPoints.concat(latlngs);
+                    // Flatten the latlngs array to handle multi-segment tracks correctly.
+                    allTrackPoints.push(...latlngs.flat(Infinity));
                 }
             });
 
