@@ -236,10 +236,18 @@ document.addEventListener('DOMContentLoaded', function () {
             const gpxLayers = e.target.getLayers();
             gpxLayers.forEach(trkLayer => {
                 console.log(`Processing a layer of type: ${trkLayer.constructor.name}`);
-                if (trkLayer instanceof L.Polyline) {
+                if (trkLayer instanceof L.Polyline) { // Handles single-segment tracks
                     const latlngs = trkLayer.getLatLngs();
                     // Flatten the latlngs array to handle multi-segment tracks correctly.
                     allTrackPoints.push(...latlngs.flat(Infinity));
+                } else if (trkLayer._layers) { // Handles multi-segment tracks wrapped in a FeatureGroup
+                    // Iterate over the layers within the group
+                    Object.values(trkLayer._layers).forEach(poly => {
+                        if (poly instanceof L.Polyline) {
+                            const latlngs = poly.getLatLngs();
+                            allTrackPoints.push(...latlngs.flat(Infinity));
+                        }
+                    });
                 }
             });
             console.log(`Total track points after processing all segments: ${allTrackPoints.length}`);
