@@ -6,6 +6,10 @@
             "description": "Historic town associated with Martin Luther."
         },
         {
+            "city": "Ferropolis",
+            "description": "Open-air museum of industrial culture, near the enormous Gremminer artificial  See."
+        },
+        {
             "city": "Dessau",
             "type": "sleep",
             "description": "Famous for the Bauhaus architectural movement."
@@ -16,9 +20,17 @@
             "description": "Known for its Renaissance castle and old town."
         },
         {
-            "city": "Nordhausen",
+            "city": "Kyffhäuser-Denkmal",
+            "description": "Monument dedicated to Emperor Frederick Barbarossa."
+        },
+        {
+            "city": "Mittelbau-Dora",
+            "description": "Concentration camp memorial site."
+        },
+        {
+            "city": "Hartzor",
             "type": "sleep",
-            "description": "Historic old town and center of German whisky."
+            "description": "Small town not far from Nordhausen"
         },
         {
             "city": "Göttingen",
@@ -26,14 +38,34 @@
             "description": "University city with a rich academic history."
         },
         {
+            "city": "Porta Westfalica",
+            "description": "Scenic gorge where the Weser River breaks through the Wiehen Hills.",
+        },
+        {
+            "city": "Detmold",
+            "description": "Known for its open-air museum and baroque architecture."
+        },
+        {
             "city": "Bad Salzulfen",
             "type": "sleep",
             "description": "Spa town with therapeutic saltwater baths."
         },
         {
+            "city": "Hermannsdenkmal",
+            "description": "Monument commemorating the Cherusci leader Arminius."
+        },
+        {
+            "city": "Externsteine",
+            "description": "Unique rock formations with historical and cultural significance."
+        },
+        {
             "city": "Paderborn",
             "type": "sleep",
             "description": "Known for its historic cathedral and tech/education."
+        },
+        {
+            "city": "Emsquellen",
+            "description": "Source of the Ems River, located in the Teutoburg Forest."
         },
         {
             "city": "Herford",
