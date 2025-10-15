@@ -235,8 +235,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const gpxLayers = e.target.getLayers();
             gpxLayers.forEach(trkLayer => {
+                console.log(`Processing a layer of type: ${trkLayer.constructor.name}`);
                 if (trkLayer instanceof L.Polyline) {
-                    console.log(`Processing a layer of type: ${trkLayer.constructor.name}`);
                     const latlngs = trkLayer.getLatLngs();
                     // Flatten the latlngs array to handle multi-segment tracks correctly.
                     allTrackPoints.push(...latlngs.flat(Infinity));
