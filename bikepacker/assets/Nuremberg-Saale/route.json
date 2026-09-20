@@ -1,0 +1,31 @@
+{
+    "stops": [
+        {
+            "city": "Nuremberg",
+            "type": "sleep",
+            "description": "Reichsparteitagsgelände — the former Nazi party rally grounds now preserved as a historical site and museum documenting the rallies and their architecture; the Old Town (Altstadt) with medieval streets, bridges and the main market area; and the Justizpalast (Justice Palace), an early-20th-century courthouse notable for its scale and architecture. These locations provide historical context, urban services, and transit options for continuing the ride."
+        },
+        {
+            "city": "Bayreuth",
+            "type": "sleep",
+            "description": "Bayreuth is home to the Festspielhaus, an opera house built originally just for Wagner. On the cities outer edge is the Hermitage, a beautiful park with artificial ruins and water features."
+        },
+        {
+            "city": "Mödlareuth",
+            "displayName": "Deutsch-Deutsches Museum",
+            "type": "default",
+            "description": "An open-air museum showcasing the local border history and daily life on both sides of the divided German state in the town, that's known as 'Little Berlin' because the border divided it in two."
+        },
+        {
+            "city": "Göritz",
+            "type": "sleep",
+            "description": "A motel on the highway, perfectly placed for our route."
+        },
+        {
+            "city": "Probstzella",
+            "displayName": "Haus des Volkes",
+            "type": "default",
+            "description": "A Bauhaus Volkshaus - a cultural center built by a social-reform industrialist for his workers."
+        }
+    ]
+}
