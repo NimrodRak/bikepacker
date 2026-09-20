@@ -348,6 +348,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Set the page title
                 document.title = `${trackName} | BikePacker`;
 
+                // Show a configurable reproduction warning if present in route.json
+                if (details && details.reproduction) {
+                    const warningDiv = document.createElement('div');
+                    warningDiv.className = 'route-reproduction-warning';
+                    warningDiv.textContent = '⚠️ Note: This map is an inaccurate reproduction of the actual route we cycled, the roads the route follows may not reflect the roads we actually took';
+                    detailsContainer.appendChild(warningDiv);
+                }
+
                 if (details && details.stops && details.stops.length > 0) {
                     const list = document.createElement('ul');
                     list.className = 'stops-list'; // For styling
